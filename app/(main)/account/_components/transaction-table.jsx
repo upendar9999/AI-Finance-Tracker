@@ -70,6 +70,15 @@ const TransactionTable = ({ transactions }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
+  const [pageIndex, setPageIndex] = useState(1);
+  // const [paginatedTransactions, setPaginatedTransactions] = useState([]);
+
+  const NO_OF_PAGES = Math.ceil(transactions.length / 10);
+
+  const transactionsPerPage = 10;
+  const startIndex = (pageIndex - 1) * transactionsPerPage;
+  const endIndex = startIndex + transactionsPerPage;
+  const paginatedTransactions = transactions.slice(startIndex, endIndex);
 
   const {
     loading: deleteLoading,
@@ -78,7 +87,7 @@ const TransactionTable = ({ transactions }) => {
   } = useFetch(bulkDeleteTransactions);
 
   const filteredAndSortedTransactions = useMemo(() => {
-    let result = [...transactions];
+    let result = [...paginatedTransactions];
 
     // Apply search filters
     if (searchTerm) {
@@ -122,7 +131,13 @@ const TransactionTable = ({ transactions }) => {
       return sortConfig.direction === "asc" ? comparison : -comparison;
     });
     return result;
-  }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
+  }, [
+    paginatedTransactions,
+    searchTerm,
+    typeFilter,
+    recurringFilter,
+    sortConfig,
+  ]);
 
   const handleSort = (field) => {
     setSortConfig((current) => ({
@@ -171,6 +186,7 @@ const TransactionTable = ({ transactions }) => {
     setRecurringFilter("");
     setSelectedIds([]);
   };
+
   return (
     <div className="space-y-4">
       {deleteLoading && (
@@ -417,6 +433,17 @@ const TransactionTable = ({ transactions }) => {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex gap-2 justify-center ">
+        {Array.from({ length: NO_OF_PAGES }, (_, index) => (
+          <Button
+            key={index}
+            className="px-4 py-2 bg-blue-500 text-white rounded w-8 h-8"
+            onClick={() => setPageIndex(index + 1)}
+          >
+            {index + 1}
+          </Button>
+        ))}
       </div>
     </div>
   );
