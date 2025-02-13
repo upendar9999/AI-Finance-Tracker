@@ -436,13 +436,20 @@ const TransactionTable = ({ transactions }) => {
       </div>
       <div className="flex gap-2 justify-center ">
         {Array.from({ length: NO_OF_PAGES }, (_, index) => (
-          <Button
-            key={index}
-            className="px-4 py-2 bg-blue-500 text-white rounded w-8 h-8"
-            onClick={() => setPageIndex(index + 1)}
-          >
-            {index + 1}
-          </Button>
+          <div className="flex flex-col  items-center">
+            <Button
+              key={index}
+              className={`px-4 py-2 rounded w-8 h-8 ${
+                pageIndex === index + 1 ? "bg-red-500" : "bg-blue-500"
+              } text-white`}
+              onClick={() => setPageIndex(index + 1)}
+            >
+              {index + 1}
+            </Button>
+            {pageIndex === index + 1 && (
+              <span className="text-red-500 mt-1">&#x25B2;</span>
+            )}
+          </div>
         ))}
       </div>
     </div>
